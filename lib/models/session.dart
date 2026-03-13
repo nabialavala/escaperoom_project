@@ -45,7 +45,7 @@ class Session {
       theme: map['theme'],
       currentLevel: map['current_level'],
       timeSpent: map['time_spent'],
-      hintsUsed: map['status'],
+      hintsUsed: map['hints_used'],
       wrongAttempts: map['wrong_attempts'],
       status: map['status'],
       finalScore: map['final_score'],

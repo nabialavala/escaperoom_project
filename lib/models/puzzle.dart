@@ -17,7 +17,7 @@ class Puzzle {
     return{
       'id': id, 
       'theme': theme,
-      'leve;_number': levelNumber,
+      'level_number': levelNumber,
       'question': question,
       'answer': answer,
     };
