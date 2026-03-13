@@ -1,5 +1,6 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'seed_data.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -59,5 +60,8 @@ class DatabaseHelper {
         FOREIGN KEY (player_id) REFERENCES players(id)
       )
     ''');
+    for (var puzzle in seedPuzzles) {
+      await db.insert('puzzles', puzzle.toMap());
+    }
   }
 }
