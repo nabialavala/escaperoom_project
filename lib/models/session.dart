@@ -22,4 +22,34 @@ class Session {
     required this.finalScore,
     required this.createdAt,
   });
+
+  Map<String, dynamic> toMap() {
+    return{
+      'id': id,
+      'player_id': playerId,
+      'theme': theme,
+      'current_level': currentLevel,
+      'time_spent': timeSpent,
+      'hints_used': hintsUsed,
+      'wrong_attempts': wrongAttempts,
+      'status': status,
+      'final_score': finalScore,
+      'created_at': createdAt,
+    };
+  }
+
+  factory Session.fromMap(Map<String, dynamic> map) {
+    return Session(
+      id: map['id'],
+      playerId: map['player_id'],
+      theme: map['theme'],
+      currentLevel: map['current_level'],
+      timeSpent: map['time_spent'],
+      hintsUsed: map['status'],
+      wrongAttempts: map['wrong_attempts'],
+      status: map['status'],
+      finalScore: map['final_score'],
+      createdAt: map['created_at'],
+    );
+  }
 }

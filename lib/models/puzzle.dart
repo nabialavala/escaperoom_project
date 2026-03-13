@@ -12,4 +12,24 @@ class Puzzle {
     required this.question,
     required this.answer,
   });
+
+  Map<String, dynamic> toMap() {
+    return{
+      'id': id, 
+      'theme': theme,
+      'leve;_number': levelNumber,
+      'question': question,
+      'answer': answer,
+    };
+  }
+
+  factory Puzzle.fromMap(Map<String, dynamic> map) {
+    return Puzzle(
+      id: map['id'],
+      theme: map['theme'],
+      levelNumber: map['level_number'],
+      question: map['question'],
+      answer: map['answer'],
+    );
+  }
 }
