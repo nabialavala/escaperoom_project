@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/puzzle.dart';
 import '../repositories/puzzle_repository.dart';
+import '../services/hint_service.dart';
 
 class GameScreen extends StatefulWidget {
   final String theme;
@@ -19,6 +21,11 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   final PuzzleRepository puzzleRepository = PuzzleRepository();
   final TextEditingController answerController = TextEditingController();
+  final HintService hintService = HintService();
+
+  Timer? hintTimer;
+  bool canUseHint = false;
+  String hintText = '';
 
   List<Puzzle> puzzles = [];
   int currentPuzzleIndex = 0;
@@ -40,6 +47,8 @@ class _GameScreenState extends State<GameScreen> {
       currentPuzzleIndex = 0;
       isLoading = false;
     });
+
+    startHintTimer();
   }
 
   void checkAnswer() {
@@ -57,12 +66,18 @@ class _GameScreenState extends State<GameScreen> {
         setState(() {
           currentPuzzleIndex++;
           answerController.clear();
+          hintText = '';
         });
+
+        startHintTimer();
       } else {
         setState(() {
           feedbackMessage = 'You completed all puzzles!';
           answerController.clear();
+          hintText = '';
         });
+
+        hintTimer?.cancel();
       }
     } else {
       setState(() {
@@ -71,8 +86,38 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  void startHintTimer() {
+    hintTimer?.cancel();
+
+    setState(() {
+      canUseHint = false;
+      hintText = '';
+    });
+
+    hintTimer = Timer(const Duration(seconds: 60), () {
+      if (mounted) {
+        setState(() {
+          canUseHint = true;
+        });
+      }
+    });
+  }
+
+  void showHint() {
+    if (!canUseHint || puzzles.isEmpty) return;
+
+    final answer = puzzles[currentPuzzleIndex].answer;
+    final hint = hintService.getHint(answer);
+
+    setState(() {
+      hintText = hint;
+      canUseHint = false;
+    });
+  }
+
   @override
   void dispose() {
+    hintTimer?.cancel();
     answerController.dispose();
     super.dispose();
   }
@@ -131,6 +176,19 @@ class _GameScreenState extends State<GameScreen> {
             ElevatedButton(
               onPressed: checkAnswer,
               child: const Text('Submit Answer'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: canUseHint ? showHint : null,
+              child: const Text('Use Hint'),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              hintText,
+              style: const TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
