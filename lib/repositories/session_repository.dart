@@ -18,4 +18,24 @@ class SessionRepository {
       whereArgs: [session.id],
     );
   }
+  Future<List<Map<String, dynamic>>> getLeaderboard() async {
+    final db = await dbHelper.database;
+
+    final result = await db.rawQuery('''
+      SELECT 
+        sessions.id,
+        players.name AS player_name,
+        sessions.theme,
+        sessions.final_score,
+        sessions.time_spent
+      FROM sessions
+      INNER JOIN players
+        ON sessions.player_id = players.id
+      WHERE sessions.status = 'completed'
+        AND sessions.final_score IS NOT NULL
+      ORDER BY sessions.final_score DESC
+    ''');
+
+    return result;
+  }
 }
