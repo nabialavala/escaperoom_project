@@ -49,13 +49,24 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> loadPuzzles() async {
-    final loadedPuzzles =
-        await puzzleRepository.getPuzzlesByTheme(widget.theme);
+    final loadedPuzzles = await puzzleRepository.getPuzzlesByTheme(widget.theme);
+    final db = await sessionRepository.dbHelper.database;
+    final existingPlayers = await db.query('players');
+    int playerId;
+
+    if (existingPlayers.isEmpty) {
+      playerId = await db.insert('players', {
+        'player_name': widget.playerName,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } else {
+      playerId = existingPlayers.first['id'] as int;
+    }
 
     gameStartTime = DateTime.now();
 
     final newSession = Session(
-      playerId: 1,
+      playerId: playerId,
       theme: widget.theme,
       currentLevel: 1,
       timeSpent: 0,
