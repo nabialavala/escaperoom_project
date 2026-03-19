@@ -24,10 +24,11 @@ class SessionRepository {
     final result = await db.rawQuery('''
       SELECT 
         sessions.id,
-        players.name AS player_name,
+        players.player_name,
         sessions.theme,
         sessions.final_score,
-        sessions.time_spent
+        sessions.time_spent,
+        sessions.current_level
       FROM sessions
       INNER JOIN players
         ON sessions.player_id = players.id
