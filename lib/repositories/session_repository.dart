@@ -42,4 +42,42 @@ class SessionRepository {
 
     return result;
   }
+  Future<List<Map<String, dynamic>>> getLeaderboard() async {
+    final db = await dbHelper.database;
+
+    final result = await db.rawQuery('''
+      SELECT 
+        sessions.id,
+        players.player_name,
+        sessions.theme,
+        sessions.final_score,
+        sessions.time_spent,
+        sessions.current_level
+      FROM sessions
+      INNER JOIN players
+        ON sessions.player_id = players.id
+      WHERE sessions.status = 'completed'
+        AND sessions.final_score IS NOT NULL
+      ORDER BY sessions.final_score DESC
+    ''');
+
+    return result;
+  }
+  Future<Session?> getActiveSession(int playerId, String theme) async {
+    final db = await dbHelper.database;
+
+    final result = await db.query(
+      'sessions',
+      where: 'player_id = ? AND theme = ? AND status = ?',
+      whereArgs: [playerId, theme, 'in_progress'],
+      orderBy: 'id DESC',
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return Session.fromMap(result.first);
+  }
 }
