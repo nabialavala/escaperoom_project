@@ -423,6 +423,15 @@ class _GameScreenState extends State<GameScreen> {
             ),
             const SizedBox(height: 20),
 
+            Text(
+              "Time Elapsed: ${gameStartTime == null ? 0 : DateTime.now().difference(gameStartTime!).inSeconds} seconds",
+              style: const TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+
+
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
               const Text(
