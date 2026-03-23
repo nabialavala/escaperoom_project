@@ -7,6 +7,8 @@ import '../repositories/session_repository.dart';
 import '../services/hint_service.dart';
 import '../services/score_service.dart';
 import 'progress_screen.dart';
+import '../widgets/puzzle_card.dart';
+import '../widgets/hint_popup.dart';
 
 class GameScreen extends StatefulWidget {
   final String theme;
@@ -466,6 +468,16 @@ class _GameScreenState extends State<GameScreen> {
                 ),
             ],
             const SizedBox(height: 20),
+
+            Text(
+              "Time Elapsed: ${gameStartTime == null ? 0 : DateTime.now().difference(gameStartTime!).inSeconds} seconds",
+              style: const TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+
+
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
               const Text(
@@ -504,13 +516,10 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
             ] else ...[
-              Text(
-                currentPuzzle.question,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              PuzzleCard(
+                puzzle: currentPuzzle.question,
               ),
+              const SizedBox(height: 10),
             ],
             const SizedBox(height: 20),
             TextField(
@@ -540,6 +549,15 @@ class _GameScreenState extends State<GameScreen> {
                   fontStyle: FontStyle.italic,
                 ),
               ),
+              if (hintText.isNotEmpty)
+               ElevatedButton(
+                onPressed: () {
+                  showHintPopup(context, hintText);
+                },
+
+                child: const Text('View Hint'),
+              ),
+
             ],
             const SizedBox(height: 16),
             Text(
