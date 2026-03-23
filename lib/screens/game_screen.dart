@@ -32,8 +32,10 @@ class _GameScreenState extends State<GameScreen> {
   final ScoreService scoreService = ScoreService();
 
   Timer? hintTimer;
+  Timer? gameTimer;
   bool canUseHint = false;
   String hintText = '';
+  int elapsedSeconds = 0;
 
   List<Puzzle> puzzles = [];
   int currentPuzzleIndex = 0;
@@ -107,6 +109,7 @@ class _GameScreenState extends State<GameScreen> {
         hintsUsed = activeSession.hintsUsed;
         wrongAttempts = activeSession.wrongAttempts;
         collectedItems = activeSession.collectedItemsList;
+        elapsedSeconds = activeSession.timeSpent;
       });
     } else {
       gameStartTime = DateTime.now();
@@ -135,10 +138,12 @@ class _GameScreenState extends State<GameScreen> {
         hintsUsed = 0;
         wrongAttempts = 0;
         collectedItems = [];
+        elapsedSeconds = 0;
       });
     }
 
     startHintTimer();
+    startGameTimer();
   }
 
   Future<void> updateCurrentSession({
@@ -362,6 +367,18 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  void startGameTimer() {
+    gameTimer?.cancel();
+    gameTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted && gameStartTime != null) {
+        setState(() {
+          elapsedSeconds =
+              DateTime.now().difference(gameStartTime!).inSeconds;
+        });
+      }
+    });
+  }
+
   Future<void> showHint() async {
     if (!canUseHint || puzzles.isEmpty) return;
 
@@ -392,6 +409,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     hintTimer?.cancel();
+    gameTimer?.cancel();
     answerController.dispose();
     super.dispose();
   }
@@ -470,13 +488,12 @@ class _GameScreenState extends State<GameScreen> {
             const SizedBox(height: 20),
 
             Text(
-              "Time Elapsed: ${gameStartTime == null ? 0 : DateTime.now().difference(gameStartTime!).inSeconds} seconds",
+              "Time Elapsed: $elapsedSeconds seconds",
               style: const TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
               ),
             ),
-
 
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
