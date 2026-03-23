@@ -215,9 +215,15 @@ class _GameScreenState extends State<GameScreen> {
         return;
       }
 
+      if (currentPuzzle.theme != 'Murder Mystery') {
+        setState(() {
+          collectedItems.add(currentPuzzle.rewardText);
+        });
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(currentPuzzle.rewardText),
+          content: Text('Collected: ${currentPuzzle.rewardText}'),
           duration: const Duration(seconds: 2),
         ),
       );
