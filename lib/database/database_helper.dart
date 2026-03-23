@@ -21,19 +21,22 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
     );
   }
 
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE puzzles (
+      CREATE TABLE puzzles(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         theme TEXT NOT NULL,
         level_number INTEGER NOT NULL,
+        story_text TEXT NOT NULL,
         question TEXT NOT NULL,
-        answer TEXT NOT NULL
+        accepted_answers TEXT NOT NULL,
+        reward_text TEXT NOT NULL,
+        is_final_level INTEGER NOT NULL
       )
     ''');
 

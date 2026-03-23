@@ -40,9 +40,22 @@ class _GameScreenState extends State<GameScreen> {
 
   int wrongAttempts = 0;
   int hintsUsed = 0;
+  int mysteryGuessAttemptsLeft = 3;
   DateTime? gameStartTime;
   int? sessionId;
   int? currentPlayerId;
+
+  final List<String> murderMysteryClues = [
+    'The cause of death was not obvious to anyone at the table',
+    'The act happened without drawing attention',
+    'The act happened in a brief, unnoticed moment',
+    'Not everyone stayed where they were',
+    'Having a reason does not mean someone committed the crime',
+    'Some stories confirm where people were the entire time',
+    'Someone was seen away from where they claimed to be',
+    'The poison was delivered through something consumed',
+    'The person who controlled the meal had the opportunity',
+  ];
 
   @override
   void initState() {
@@ -146,14 +159,68 @@ class _GameScreenState extends State<GameScreen> {
     await sessionRepository.updateSession(currentSession);
   }
 
+  bool isCorrectAnswer(String userAnswer, Puzzle puzzle) {
+    final normalizedInput = userAnswer.toLowerCase().trim();
+    return puzzle.acceptedAnswerList.contains(normalizedInput);
+  }
+
   Future<void> checkAnswer() async {
     if (puzzles.isEmpty) return;
 
+    final currentPuzzle = puzzles[currentPuzzleIndex];
     final userAnswer = answerController.text.trim().toLowerCase();
-    final correctAnswer =
-        puzzles[currentPuzzleIndex].answer.trim().toLowerCase();
 
-    if (userAnswer == correctAnswer) {
+    if (isCorrectAnswer(userAnswer, currentPuzzle)) {
+      if (currentPuzzle.theme == 'Murder Mystery' &&
+          currentPuzzle.isFinalLevel == 1) {
+        final timeSpent = gameStartTime == null
+            ? 0
+            : DateTime.now().difference(gameStartTime!).inSeconds;
+
+        final difficultyBonus =
+            scoreService.getDifficultyBonus(puzzles.length);
+
+        final finalScore = scoreService.calculateScore(
+          timeSpent: timeSpent,
+          hintsUsed: hintsUsed,
+          wrongAttempts: wrongAttempts,
+          difficultyBonus: difficultyBonus,
+        );
+
+        setState(() {
+          feedbackMessage =
+              'Case solved! You identified the killer. Final Score: $finalScore';
+          answerController.clear();
+          hintText = '';
+        });
+
+        await updateCurrentSession(
+          status: 'completed',
+          finalScore: finalScore,
+        );
+
+        hintTimer?.cancel();
+
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProgressScreen(
+              playerName: widget.playerName,
+            ),
+          ),
+        );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(currentPuzzle.rewardText),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
       if (currentPuzzleIndex < puzzles.length - 1) {
         setState(() {
           feedbackMessage = 'Correct!';
@@ -211,6 +278,50 @@ class _GameScreenState extends State<GameScreen> {
     } else {
       wrongAttempts++;
 
+      if (currentPuzzle.theme == 'Murder Mystery' &&
+          currentPuzzle.isFinalLevel == 1) {
+        mysteryGuessAttemptsLeft--;
+
+        if (mysteryGuessAttemptsLeft <= 0) {
+          setState(() {
+            feedbackMessage =
+                'No attempts left. The killer was Chef Marco.';
+            answerController.clear();
+            hintText = '';
+          });
+
+          await updateCurrentSession(
+            status: 'completed',
+            finalScore: 0,
+          );
+
+          hintTimer?.cancel();
+
+          if (!mounted) return;
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ProgressScreen(
+                playerName: widget.playerName,
+              ),
+            ),
+          );
+        } else {
+          setState(() {
+            feedbackMessage =
+                'Wrong guess. You have $mysteryGuessAttemptsLeft tries left.';
+          });
+
+          await updateCurrentSession(
+            status: 'in_progress',
+            finalScore: 0,
+          );
+        }
+
+        return;
+      }
+
       setState(() {
         feedbackMessage = 'Wrong answer. Try again.';
       });
@@ -242,8 +353,9 @@ class _GameScreenState extends State<GameScreen> {
   Future<void> showHint() async {
     if (!canUseHint || puzzles.isEmpty) return;
 
-    final answer = puzzles[currentPuzzleIndex].answer;
-    final hint = hintService.getHint(answer);
+    final currentPuzzle = puzzles[currentPuzzleIndex];
+    final firstAcceptedAnswer = currentPuzzle.acceptedAnswerList.first;
+    final hint = hintService.getHint(firstAcceptedAnswer);
 
     hintsUsed++;
 
@@ -295,18 +407,67 @@ class _GameScreenState extends State<GameScreen> {
       appBar: AppBar(
         title: Text('${widget.theme} - Level ${currentPuzzle.levelNumber}'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              currentPuzzle.question,
+              currentPuzzle.storyText,
               style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                height: 1.5,
               ),
             ),
+            const SizedBox(height: 20),
+
+            if (currentPuzzle.theme == 'Murder Mystery' &&
+                currentPuzzle.isFinalLevel == 1) ...[
+              const Text(
+                'Clues Collected:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              ...murderMysteryClues.asMap().entries.map((entry) {
+                final number = entry.key + 1;
+                final clue = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    '$number. $clue',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                );
+              }).toList(),
+              const SizedBox(height: 20),
+              Text(
+                currentPuzzle.question,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'You have $mysteryGuessAttemptsLeft guesses remaining.',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ] else ...[
+              Text(
+                currentPuzzle.question,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+
             const SizedBox(height: 20),
             TextField(
               controller: answerController,
@@ -320,19 +481,24 @@ class _GameScreenState extends State<GameScreen> {
               onPressed: checkAnswer,
               child: const Text('Submit Answer'),
             ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: canUseHint ? showHint : null,
-              child: const Text('Use Hint'),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              hintText,
-              style: const TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
+
+            if (!(currentPuzzle.theme == 'Murder Mystery' &&
+                currentPuzzle.isFinalLevel == 1)) ...[
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: canUseHint ? showHint : null,
+                child: const Text('Use Hint'),
               ),
-            ),
+              const SizedBox(height: 12),
+              Text(
+                hintText,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+
             const SizedBox(height: 16),
             Text(
               feedbackMessage,
