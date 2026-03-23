@@ -37,6 +37,7 @@ class _GameScreenState extends State<GameScreen> {
   int currentPuzzleIndex = 0;
   bool isLoading = true;
   String feedbackMessage = '';
+  List<String> collectedItems = [];
 
   int wrongAttempts = 0;
   int hintsUsed = 0;
@@ -214,9 +215,15 @@ class _GameScreenState extends State<GameScreen> {
         return;
       }
 
+      if (currentPuzzle.theme != 'Murder Mystery') {
+        setState(() {
+          collectedItems.add(currentPuzzle.rewardText);
+        });
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(currentPuzzle.rewardText),
+          content: Text('Collected: ${currentPuzzle.rewardText}'),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -364,6 +371,13 @@ class _GameScreenState extends State<GameScreen> {
       canUseHint = false;
     });
 
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Hint Unlocked: $hint'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
     await updateCurrentSession(
       status: 'in_progress',
       finalScore: 0,
@@ -419,6 +433,37 @@ class _GameScreenState extends State<GameScreen> {
                 height: 1.5,
               ),
             ),
+
+            if (widget.theme != 'Murder Mystery') ...[
+              const SizedBox(height: 20),
+              Text(
+                'Collected Items (${collectedItems.length}/10)',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              if (collectedItems.isEmpty)
+                const Text('No items collected yet.')
+              else
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: collectedItems.asMap().entries.map((entry) {
+                    final index = entry.key + 1;
+                    final item = entry.value;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        '$index. $item',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }).toList(),
+                ),
+            ],
+
             const SizedBox(height: 20),
 
             if (currentPuzzle.theme == 'Murder Mystery' &&
