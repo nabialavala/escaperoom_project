@@ -39,4 +39,21 @@ class SessionRepository {
 
     return result;
   }
+  Future<Session?> getActiveSession(int playerId, String theme) async {
+    final db = await dbHelper.database;
+
+    final result = await db.query(
+      'sessions',
+      where: 'player_id = ? AND theme = ? AND status = ?',
+      whereArgs: [playerId, theme, 'in_progress'],
+      orderBy: 'id DESC',
+      limit: 1,
+    );
+
+    if (result.isEmpty) {
+      return null;
+    }
+
+    return Session.fromMap(result.first);
+  }
 }
