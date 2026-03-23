@@ -5,7 +5,7 @@ final List<Puzzle> seedPuzzles = [
   Puzzle(
     theme: 'Zombie',
     levelNumber: 1,
-    storyText: 'The lab is in chaos. Notes are scattered, alarms are blaring, and infected patients are losing time. You find a journal entry mentioning the first ingredient needed for a cure. It is hidden behind a simple test.',
+    storyText: 'You enter a contaminated lab. To create the antidote, you must collect all 10 ingredients before the infection spreads.',
     question: 'What has to be broken before you can use it?',
     acceptedAnswers: 'egg',
     rewardText: 'You obtained: protein sample',
@@ -97,7 +97,7 @@ final List<Puzzle> seedPuzzles = [
   Puzzle(
     theme: 'Time Travel',
     levelNumber: 1,
-    storyText: 'You awaken in an unfamiliar time. Your time machine is damaged and missing key parts. A nearby panel flickers with a test.',
+    storyText: 'The time machine is broken and you are in the wrong time period. You must collect all 10 parts to restore it and return home.',
     question: 'What goes up but never comes down?',
     acceptedAnswers: 'age',
     rewardText: 'You obtained: power core',

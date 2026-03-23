@@ -370,6 +370,12 @@ class _GameScreenState extends State<GameScreen> {
       hintText = hint;
       canUseHint = false;
     });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Hint Unlocked: $hint'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
 
     await updateCurrentSession(
       status: 'in_progress',
@@ -426,6 +432,29 @@ class _GameScreenState extends State<GameScreen> {
                 height: 1.5,
               ),
             ),
+            if (widget.theme != 'Murder Mystery') ...[
+              const SizedBox(height: 20),
+              const Text(
+                'Collected Items:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              if (collectedItems.isEmpty)
+                const Text('No items collected yet.')
+              else
+                Wrap(
+                  spacing: 8,
+                  children: collectedItems.map((item) {
+                    return Chip(
+                      label: Text(item),
+                    );
+                  }).toList(),
+                ),
+            ],
             const SizedBox(height: 20),
 
             if (currentPuzzle.theme == 'Murder Mystery' &&
