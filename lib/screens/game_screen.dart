@@ -370,6 +370,7 @@ class _GameScreenState extends State<GameScreen> {
       hintText = hint;
       canUseHint = false;
     });
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Hint Unlocked: $hint'),
@@ -432,29 +433,37 @@ class _GameScreenState extends State<GameScreen> {
                 height: 1.5,
               ),
             ),
+
             if (widget.theme != 'Murder Mystery') ...[
               const SizedBox(height: 20),
-              const Text(
-                'Collected Items:',
-                style: TextStyle(
+              Text(
+                'Collected Items (${collectedItems.length}/10)',
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 10),
-
               if (collectedItems.isEmpty)
                 const Text('No items collected yet.')
               else
-                Wrap(
-                  spacing: 8,
-                  children: collectedItems.map((item) {
-                    return Chip(
-                      label: Text(item),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: collectedItems.asMap().entries.map((entry) {
+                    final index = entry.key + 1;
+                    final item = entry.value;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Text(
+                        '$index. $item',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     );
                   }).toList(),
                 ),
             ],
+
             const SizedBox(height: 20),
 
             if (currentPuzzle.theme == 'Murder Mystery' &&
