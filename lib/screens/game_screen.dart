@@ -6,6 +6,7 @@ import '../repositories/puzzle_repository.dart';
 import '../repositories/session_repository.dart';
 import '../services/hint_service.dart';
 import '../services/score_service.dart';
+import 'progress_screen.dart';
 
 class GameScreen extends StatefulWidget {
   final String theme;
@@ -41,39 +42,78 @@ class _GameScreenState extends State<GameScreen> {
   int hintsUsed = 0;
   DateTime? gameStartTime;
   int? sessionId;
+  int? currentPlayerId;
 
   @override
   void initState() {
     super.initState();
-    loadPuzzles();
+    Future.microtask(() => loadPuzzles());
   }
 
   Future<void> loadPuzzles() async {
-    final loadedPuzzles =
-        await puzzleRepository.getPuzzlesByTheme(widget.theme);
-
-    gameStartTime = DateTime.now();
-
-    final newSession = Session(
-      playerId: 1,
-      theme: widget.theme,
-      currentLevel: 1,
-      timeSpent: 0,
-      hintsUsed: 0,
-      wrongAttempts: 0,
-      status: 'in_progress',
-      finalScore: 0,
-      createdAt: gameStartTime!.toIso8601String(),
+    final loadedPuzzles = await puzzleRepository.getPuzzlesByTheme(widget.theme);
+    final db = await sessionRepository.dbHelper.database;
+    final existingPlayers = await db.query(
+      'players',
+      where: 'player_name = ?',
+      whereArgs: [widget.playerName],
+      limit: 1,
     );
+    int playerId;
 
-    final createdSessionId = await sessionRepository.createSession(newSession);
+    if (existingPlayers.isEmpty) {
+      playerId = await db.insert('players', {
+        'player_name': widget.playerName,
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } else {
+      playerId = existingPlayers.first['id'] as int;
+    }
 
-    setState(() {
-      puzzles = loadedPuzzles;
-      currentPuzzleIndex = 0;
-      isLoading = false;
-      sessionId = createdSessionId;
-    });
+    final activeSession =
+        await sessionRepository.getActiveSession(playerId, widget.theme);
+
+    if (activeSession != null) {
+      gameStartTime = DateTime.now().subtract(
+        Duration(seconds: activeSession.timeSpent),
+      );
+
+      setState(() {
+        puzzles = loadedPuzzles;
+        currentPuzzleIndex = activeSession.currentLevel - 1;
+        isLoading = false;
+        sessionId = activeSession.id;
+        currentPlayerId = playerId;
+        hintsUsed = activeSession.hintsUsed;
+        wrongAttempts = activeSession.wrongAttempts;
+      });
+    } else {
+      gameStartTime = DateTime.now();
+
+      final newSession = Session(
+        playerId: playerId,
+        theme: widget.theme,
+        currentLevel: 1,
+        timeSpent: 0,
+        hintsUsed: 0,
+        wrongAttempts: 0,
+        status: 'in_progress',
+        finalScore: 0,
+        createdAt: gameStartTime!.toIso8601String(),
+      );
+
+      final createdSessionId = await sessionRepository.createSession(newSession);
+
+      setState(() {
+        puzzles = loadedPuzzles;
+        currentPuzzleIndex = 0;
+        isLoading = false;
+        sessionId = createdSessionId;
+        currentPlayerId = playerId;
+        hintsUsed = 0;
+        wrongAttempts = 0;
+      });
+    }
 
     startHintTimer();
   }
@@ -82,11 +122,11 @@ class _GameScreenState extends State<GameScreen> {
     required String status,
     required int finalScore,
   }) async {
-    if (sessionId == null || gameStartTime == null) return;
+    if (sessionId == null || gameStartTime == null || currentPlayerId == null) return;
 
     final currentSession = Session(
       id: sessionId,
-      playerId: 1,
+      playerId: currentPlayerId!,
       theme: widget.theme,
       currentLevel: currentPuzzleIndex + 1,
       timeSpent: DateTime.now().difference(gameStartTime!).inSeconds,
@@ -151,6 +191,14 @@ class _GameScreenState extends State<GameScreen> {
         );
 
         hintTimer?.cancel();
+        if (!mounted) return;
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ProgressScreen(),
+          ),
+        );
       }
     } else {
       wrongAttempts++;
