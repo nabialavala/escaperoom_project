@@ -104,6 +104,7 @@ class _GameScreenState extends State<GameScreen> {
         currentPlayerId = playerId;
         hintsUsed = activeSession.hintsUsed;
         wrongAttempts = activeSession.wrongAttempts;
+        collectedItems = activeSession.collectedItemsList;
       });
     } else {
       gameStartTime = DateTime.now();
@@ -118,6 +119,7 @@ class _GameScreenState extends State<GameScreen> {
         status: 'in_progress',
         finalScore: 0,
         createdAt: gameStartTime!.toIso8601String(),
+        collectedItems: '',
       );
 
       final createdSessionId = await sessionRepository.createSession(newSession);
@@ -130,6 +132,7 @@ class _GameScreenState extends State<GameScreen> {
         currentPlayerId = playerId;
         hintsUsed = 0;
         wrongAttempts = 0;
+        collectedItems = [];
       });
     }
 
@@ -155,6 +158,7 @@ class _GameScreenState extends State<GameScreen> {
       status: status,
       finalScore: finalScore,
       createdAt: gameStartTime!.toIso8601String(),
+      collectedItems: collectedItems.join('|'),
     );
 
     await sessionRepository.updateSession(currentSession);
@@ -215,10 +219,9 @@ class _GameScreenState extends State<GameScreen> {
         return;
       }
 
-      if (currentPuzzle.theme != 'Murder Mystery') {
-        setState(() {
-          collectedItems.add(currentPuzzle.rewardText);
-        });
+      if (currentPuzzle.theme != 'Murder Mystery' &&
+          !collectedItems.contains(currentPuzzle.rewardText)) {
+        collectedItems.add(currentPuzzle.rewardText);
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -373,7 +376,7 @@ class _GameScreenState extends State<GameScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Hint Unlocked: $hint'),
+        content: Text('Hint unlocked: $hint'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -433,7 +436,6 @@ class _GameScreenState extends State<GameScreen> {
                 height: 1.5,
               ),
             ),
-
             if (widget.theme != 'Murder Mystery') ...[
               const SizedBox(height: 20),
               Text(
@@ -463,9 +465,7 @@ class _GameScreenState extends State<GameScreen> {
                   }).toList(),
                 ),
             ],
-
             const SizedBox(height: 20),
-
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
               const Text(
@@ -512,7 +512,6 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
             ],
-
             const SizedBox(height: 20),
             TextField(
               controller: answerController,
@@ -526,7 +525,6 @@ class _GameScreenState extends State<GameScreen> {
               onPressed: checkAnswer,
               child: const Text('Submit Answer'),
             ),
-
             if (!(currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1)) ...[
               const SizedBox(height: 12),
@@ -543,7 +541,6 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
             ],
-
             const SizedBox(height: 16),
             Text(
               feedbackMessage,
