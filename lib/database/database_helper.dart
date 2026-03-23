@@ -5,12 +5,11 @@ import 'seed_data.dart';
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
+
   DatabaseHelper._init();
 
   Future<Database> get database async {
-    if (_database != null) {
-      return _database!;
-    }
+    if (_database != null) return _database!;
     _database = await _initDB('escape_room.db');
     return _database!;
   }
@@ -23,12 +22,22 @@ class DatabaseHelper {
       path,
       version: 2,
       onCreate: _createDB,
+      onUpgrade: _onUpgrade,
+      onOpen: _onOpen,
     );
   }
 
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE puzzles(
+      CREATE TABLE players (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player_name TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE puzzles (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         theme TEXT NOT NULL,
         level_number INTEGER NOT NULL,
@@ -41,30 +50,59 @@ class DatabaseHelper {
     ''');
 
     await db.execute('''
-      CREATE TABLE players (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        player_name TEXT NOT NULL,
-        created_at TEXT NOT NULL
-      )
-    ''');
-
-    await db.execute('''
       CREATE TABLE sessions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         player_id INTEGER NOT NULL,
         theme TEXT NOT NULL,
-        current_level INTEGER NOT NULL, 
-        time_spent INTEGER NOT NULL, 
-        hints_used INTEGER NOT NULL, 
-        wrong_attempts INTEGER NOT NULL, 
-        status TEXT NOT NULL, 
-        final_score INTEGER NOT NULL, 
+        current_level INTEGER NOT NULL,
+        time_spent INTEGER NOT NULL,
+        hints_used INTEGER NOT NULL,
+        wrong_attempts INTEGER NOT NULL,
+        status TEXT NOT NULL,
+        final_score INTEGER NOT NULL,
         created_at TEXT NOT NULL,
-        FOREIGN KEY (player_id) REFERENCES players(id)
+        collected_items TEXT NOT NULL DEFAULT '',
+        FOREIGN KEY (player_id) REFERENCES players (id)
       )
     ''');
-    for (var puzzle in seedPuzzles) {
-      await db.insert('puzzles', puzzle.toMap());
+
+    await _seedPuzzles(db);
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute("""
+        ALTER TABLE sessions
+        ADD COLUMN collected_items TEXT NOT NULL DEFAULT ''
+      """);
     }
+  }
+
+  Future<void> _onOpen(Database db) async {
+    await _seedPuzzlesIfEmpty(db);
+  }
+
+  Future<void> _seedPuzzles(Database db) async {
+    for (final puzzle in seedPuzzles) {
+      await db.insert(
+        'puzzles',
+        puzzle.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+  }
+
+  Future<void> _seedPuzzlesIfEmpty(Database db) async {
+    final result = await db.rawQuery('SELECT COUNT(*) as count FROM puzzles');
+    final count = Sqflite.firstIntValue(result) ?? 0;
+
+    if (count == 0) {
+      await _seedPuzzles(db);
+    }
+  }
+
+  Future<void> close() async {
+    final db = await instance.database;
+    db.close();
   }
 }
