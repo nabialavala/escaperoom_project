@@ -51,14 +51,18 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Future<void> loadPuzzles() async {
-    final loadedPuzzles = await puzzleRepository.getPuzzlesByTheme(widget.theme);
+    final loadedPuzzles =
+        await puzzleRepository.getPuzzlesByTheme(widget.theme);
+
     final db = await sessionRepository.dbHelper.database;
+
     final existingPlayers = await db.query(
       'players',
       where: 'player_name = ?',
       whereArgs: [widget.playerName],
       limit: 1,
     );
+
     int playerId;
 
     if (existingPlayers.isEmpty) {
@@ -122,7 +126,9 @@ class _GameScreenState extends State<GameScreen> {
     required String status,
     required int finalScore,
   }) async {
-    if (sessionId == null || gameStartTime == null || currentPlayerId == null) return;
+    if (sessionId == null || gameStartTime == null || currentPlayerId == null) {
+      return;
+    }
 
     final currentSession = Session(
       id: sessionId,
@@ -144,15 +150,13 @@ class _GameScreenState extends State<GameScreen> {
     if (puzzles.isEmpty) return;
 
     final userAnswer = answerController.text.trim().toLowerCase();
-    final correctAnswer = puzzles[currentPuzzleIndex].answer.trim().toLowerCase();
+    final correctAnswer =
+        puzzles[currentPuzzleIndex].answer.trim().toLowerCase();
 
     if (userAnswer == correctAnswer) {
-      setState(() {
-        feedbackMessage = 'Correct!';
-      });
-
       if (currentPuzzleIndex < puzzles.length - 1) {
         setState(() {
+          feedbackMessage = 'Correct!';
           currentPuzzleIndex++;
           answerController.clear();
           hintText = '';
@@ -180,7 +184,8 @@ class _GameScreenState extends State<GameScreen> {
         );
 
         setState(() {
-          feedbackMessage = 'You completed all puzzles! Final Score: $finalScore';
+          feedbackMessage =
+              'You completed all puzzles! Final Score: $finalScore';
           answerController.clear();
           hintText = '';
         });
@@ -191,12 +196,15 @@ class _GameScreenState extends State<GameScreen> {
         );
 
         hintTimer?.cancel();
+
         if (!mounted) return;
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const ProgressScreen(),
+            builder: (_) => ProgressScreen(
+              playerName: widget.playerName,
+            ),
           ),
         );
       }
