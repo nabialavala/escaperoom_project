@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
       onOpen: _onOpen,
@@ -45,7 +45,8 @@ class DatabaseHelper {
         question TEXT NOT NULL,
         accepted_answers TEXT NOT NULL,
         reward_text TEXT NOT NULL,
-        is_final_level INTEGER NOT NULL
+        is_final_level INTEGER NOT NULL,
+        hint TEXT NOT NULL
       )
     ''');
 
@@ -75,6 +76,26 @@ class DatabaseHelper {
         ALTER TABLE sessions
         ADD COLUMN collected_items TEXT NOT NULL DEFAULT ''
       """);
+    }
+
+    if (oldVersion < 3) {
+      await db.execute('DROP TABLE IF EXISTS puzzles');
+
+      await db.execute('''
+        CREATE TABLE puzzles (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          theme TEXT NOT NULL,
+          level_number INTEGER NOT NULL,
+          story_text TEXT NOT NULL,
+          question TEXT NOT NULL,
+          accepted_answers TEXT NOT NULL,
+          reward_text TEXT NOT NULL,
+          is_final_level INTEGER NOT NULL,
+          hint TEXT NOT NULL
+        )
+      ''');
+
+      await _seedPuzzles(db);
     }
   }
 

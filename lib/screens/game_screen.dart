@@ -383,8 +383,7 @@ class _GameScreenState extends State<GameScreen> {
     if (!canUseHint || puzzles.isEmpty) return;
 
     final currentPuzzle = puzzles[currentPuzzleIndex];
-    final firstAcceptedAnswer = currentPuzzle.acceptedAnswerList.first;
-    final hint = hintService.getHint(firstAcceptedAnswer);
+    final hint = hintService.getHint(currentPuzzle.hint);
 
     hintsUsed++;
 
@@ -486,7 +485,6 @@ class _GameScreenState extends State<GameScreen> {
                 ),
             ],
             const SizedBox(height: 20),
-
             Text(
               "Time Elapsed: $elapsedSeconds seconds",
               style: const TextStyle(
@@ -494,7 +492,6 @@ class _GameScreenState extends State<GameScreen> {
                 fontStyle: FontStyle.italic,
               ),
             ),
-
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
               const Text(
@@ -567,14 +564,12 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ),
               if (hintText.isNotEmpty)
-               ElevatedButton(
-                onPressed: () {
-                  showHintPopup(context, hintText);
-                },
-
-                child: const Text('View Hint'),
-              ),
-
+                ElevatedButton(
+                  onPressed: () {
+                    showHintPopup(context, hintText);
+                  },
+                  child: const Text('View Hint'),
+                ),
             ],
             const SizedBox(height: 16),
             Text(

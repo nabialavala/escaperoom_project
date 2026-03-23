@@ -7,6 +7,7 @@ class Puzzle {
   final String acceptedAnswers; // store as one string: answer1|answer2|answer3
   final String rewardText;
   final int isFinalLevel; // 0 = normal level, 1 = special final guess level
+  final String hint;
 
   Puzzle({
     this.id,
@@ -17,6 +18,7 @@ class Puzzle {
     required this.acceptedAnswers,
     required this.rewardText,
     required this.isFinalLevel,
+    required this.hint,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,6 +31,7 @@ class Puzzle {
       'accepted_answers': acceptedAnswers,
       'reward_text': rewardText,
       'is_final_level': isFinalLevel,
+      'hint': hint,
     };
   }
 
@@ -42,6 +45,7 @@ class Puzzle {
       acceptedAnswers: map['accepted_answers'],
       rewardText: map['reward_text'],
       isFinalLevel: map['is_final_level'],
+      hint: map['hint'],
     );
   }
 
