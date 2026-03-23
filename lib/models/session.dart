@@ -9,6 +9,7 @@ class Session {
   final String status;
   final int finalScore;
   final String createdAt;
+  final String collectedItems;
 
   Session({
     this.id,
@@ -21,10 +22,11 @@ class Session {
     required this.status,
     required this.finalScore,
     required this.createdAt,
+    required this.collectedItems,
   });
 
   Map<String, dynamic> toMap() {
-    return{
+    return {
       'id': id,
       'player_id': playerId,
       'theme': theme,
@@ -35,6 +37,7 @@ class Session {
       'status': status,
       'final_score': finalScore,
       'created_at': createdAt,
+      'collected_items': collectedItems,
     };
   }
 
@@ -50,6 +53,19 @@ class Session {
       status: map['status'],
       finalScore: map['final_score'],
       createdAt: map['created_at'],
+      collectedItems: map['collected_items'] ?? '',
     );
+  }
+
+  List<String> get collectedItemsList {
+    if (collectedItems.trim().isEmpty) {
+      return [];
+    }
+
+    return collectedItems
+        .split('|')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
   }
 }
