@@ -37,6 +37,7 @@ class _GameScreenState extends State<GameScreen> {
   int currentPuzzleIndex = 0;
   bool isLoading = true;
   String feedbackMessage = '';
+  List<String> collectedItems = [];
 
   int wrongAttempts = 0;
   int hintsUsed = 0;
