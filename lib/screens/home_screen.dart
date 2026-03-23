@@ -1,6 +1,38 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 
+void showHowToPlay(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      backgroundColor: Colors.black,
+       title: const Text(
+         'How to Play',
+         style: TextStyle(color: Colors.white),
+       ),
+    
+      content: const Text(
+        "1. Choose a theme to begin.\n\n"
+        "2. Read each puzzle carefully.\n\n"
+        "3. Enter your answer and submit.\n\n"
+        "4. Use hints if you're stuck.\n\n"
+        "5. Solve all puzzles to escape!\n\n"
+        "Your score depends on time, hints, and mistakes.",
+        style: TextStyle(color: Colors.grey),
+      ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Got it!',
+              style: TextStyle(color: Colors.deepPurple),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -68,7 +100,9 @@ class HomeScreen extends StatelessWidget {
 
               //  OPTIONAL EXTRA BUTTON
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  showHowToPlay(context);
+                },
                 child: const Text(
                   "How to Play",
                   style: TextStyle(color: Colors.grey),
