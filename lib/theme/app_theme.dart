@@ -22,7 +22,7 @@ class AppTheme {
       ),
     ),
 
-    // 🔤 Text styles
+    //  Text styles
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Colors.white),
       bodyMedium: TextStyle(color: Colors.grey),
@@ -34,7 +34,7 @@ class AppTheme {
       ),
     ),
 
-    // 🔘 Buttons
+    //  Buttons
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
@@ -47,7 +47,7 @@ class AppTheme {
       ),
     ),
 
-    // 🧾 Input fields
+    //  Input fields
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: Colors.grey[900],
