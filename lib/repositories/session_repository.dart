@@ -18,6 +18,16 @@ class SessionRepository {
       whereArgs: [session.id],
     );
   }
+
+  Future<int> deleteSession(int id) async {
+    final db = await dbHelper.database;
+    return await db.delete(
+      'sessions',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+}
+
   Future<List<Map<String, dynamic>>> getPlayerSessions(String playerName) async {
     final db = await dbHelper.database;
 
