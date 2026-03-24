@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../main.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController usernameController = TextEditingController();
 
-  bool isDarkMode = false;
+  bool isDarkMode = true;
   bool soundEnabled = true;
   bool hintsEnabled = true;
   bool isLoading = true;
@@ -27,7 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() {
       usernameController.text = prefs.getString('username') ?? '';
-      isDarkMode = prefs.getBool('dark_mode') ?? false;
+      isDarkMode = prefs.getBool('dark_mode') ?? true;
       soundEnabled = prefs.getBool('sound_enabled') ?? true;
       hintsEnabled = prefs.getBool('hints_enabled') ?? true;
       isLoading = false;
@@ -41,6 +42,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setBool('dark_mode', isDarkMode);
     await prefs.setBool('sound_enabled', soundEnabled);
     await prefs.setBool('hints_enabled', hintsEnabled);
+
+    if (!mounted) return;
+
+    await MyApp.of(context)?.updateThemeMode(isDarkMode);
 
     if (!mounted) return;
 
