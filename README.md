@@ -112,9 +112,7 @@ Hints are stored in the database and displayed during gameplay when unlocked.
 
 # Scoring System
 The final score is calculated using the following formula:
-
 Score = 1000 - (time * 2) - (hints * 50) - (wrong attempts * 25) + (difficulty bonus * 100)
-
 
 # Screens
 - Home Screen: start game and view instructions  
@@ -125,4 +123,32 @@ Score = 1000 - (time * 2) - (hints * 50) - (wrong attempts * 25) + (difficulty b
 - Leaderboard Screen: view top scores  
 - Summary Screen: display final results  
 - Settings Screen: manage user preferences  
+
+# Setup Instructions
+1. Prerequisites
+Make sure you have installed:
+Flutter SDK
+Dart SDK
+Android Studio or VS Code
+Emulator or physical Android device
+
+2. Clone the repository:
+git clone https://github.com/your-username/your-repo-name.git
+
+3. Navigate to the project directory:
+cd escape_room
+
+4. Install dependencies:
+flutter pub get
+
+5. Run the application:
+flutter run
+
+6. Build APK (for submission)
+flutter build apk --release
+
+APK will be located in:
+build/app/outputs/flutter-apk/app-release.apk
+
+
 
