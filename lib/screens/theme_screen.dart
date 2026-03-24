@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'game_screen.dart';
 import 'progress_screen.dart';
 import 'leader_screen.dart';
+import 'settings_screen.dart';
 
 class ThemeScreen extends StatelessWidget {
   final String username;
@@ -86,6 +87,49 @@ class ThemeScreen extends StatelessWidget {
                 title: "Leaderboard",
                 icon: Icons.emoji_events,
                 destination: const LeaderScreen(),
+              ),
+
+              const SizedBox(height: 15),
+
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.white30),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                  ),
+                  onPressed: () async {
+                    final updatedUsername = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    );
+
+                    if (updatedUsername != null && updatedUsername is String) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ThemeScreen(username: updatedUsername),
+                        ),
+                      );
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.settings, color: Colors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        "Settings",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
