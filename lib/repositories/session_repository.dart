@@ -1,14 +1,17 @@
 import '../database/database_helper.dart';
 import '../models/session.dart';
 
+//Handles all database operations related to saving game sessions
 class SessionRepository {
   final DatabaseHelper dbHelper = DatabaseHelper.instance;
 
+  //Inserts a new session when a player starts a fresh run
   Future<int> createSession(Session session) async {
     final db = await dbHelper.database;
     return await db.insert('sessions', session.toMap());
   }
 
+  //Updates an existing session as the player progresses through the game
   Future<int> updateSession(Session session) async {
     final db = await dbHelper.database;
     return await db.update(
@@ -28,6 +31,7 @@ class SessionRepository {
     );
 }
 
+  //Returns all sessions for one player so progress and history can be displayed
   Future<List<Map<String, dynamic>>> getPlayerSessions(String playerName) async {
     final db = await dbHelper.database;
 
@@ -52,6 +56,8 @@ class SessionRepository {
 
     return result;
   }
+
+  //Returns completed sessions sorted by highest score for the leaderboard
   Future<List<Map<String, dynamic>>> getLeaderboard() async {
     final db = await dbHelper.database;
 
@@ -73,6 +79,8 @@ class SessionRepository {
 
     return result;
   }
+
+  //Finds the latest unfinished session for this player and theme so the game can resume
   Future<Session?> getActiveSession(int playerId, String theme) async {
     final db = await dbHelper.database;
 

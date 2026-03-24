@@ -1,4 +1,5 @@
 class ScoreService {
+  //Calculates the final score using time, hints, mistakes, and difficulty bonus
   int calculateScore({
     required int timeSpent,
     required int hintsUsed,
@@ -18,6 +19,7 @@ class ScoreService {
     return score;
   }
 
+  //Assigns a larger bonus when the player completes more levels
   int getDifficultyBonus(int totalLevelsCompleted) {
     if (totalLevelsCompleted >= 10) {
       return 3;

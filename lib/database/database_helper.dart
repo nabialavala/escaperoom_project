@@ -8,6 +8,7 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
+  //Returns the single shared database instance so the app does not open multiple connections
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDB('escape_room.db');
@@ -27,6 +28,7 @@ class DatabaseHelper {
     );
   }
 
+  //Creates all required tables the first time the database is built
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE players (
@@ -113,6 +115,7 @@ class DatabaseHelper {
     }
   }
 
+  //Prevents duplicate puzzle inserts by only seeding when puzzle table is empty
   Future<void> _seedPuzzlesIfEmpty(Database db) async {
     final result = await db.rawQuery('SELECT COUNT(*) as count FROM puzzles');
     final count = Sqflite.firstIntValue(result) ?? 0;

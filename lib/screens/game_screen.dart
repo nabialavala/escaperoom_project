@@ -128,6 +128,7 @@ class _GameScreenState extends State<GameScreen> {
     return isDarkMode ? Colors.white70 : Colors.black87;
   }
 
+  //Loads puzzles data, finds or creates the player, and restores any existing sessions
   Future<void> loadPuzzles() async {
     final loadedPuzzles =
         await puzzleRepository.getPuzzlesByTheme(widget.theme);
@@ -206,6 +207,7 @@ class _GameScreenState extends State<GameScreen> {
     startGameTimer();
   }
 
+  //Saves player's current progress so the game can be resumed
   Future<void> updateCurrentSession({
     required String status,
     required int finalScore,
@@ -231,11 +233,13 @@ class _GameScreenState extends State<GameScreen> {
     await sessionRepository.updateSession(currentSession);
   }
 
+  //Compares user input to accepts answer
   bool isCorrectAnswer(String userAnswer, Puzzle puzzle) {
     final normalizedInput = userAnswer.toLowerCase().trim();
     return puzzle.acceptedAnswerList.contains(normalizedInput);
   }
 
+  //Handles correct and incorrect answers, advances leveles, updates score, and ends game when needed. 
   Future<void> checkAnswer() async {
     if (puzzles.isEmpty) return;
 
@@ -414,6 +418,7 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  //Unlocks hint after the player has spent enough time on the current puzzle
   void startHintTimer() {
     hintTimer?.cancel();
 
@@ -431,6 +436,7 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  //Updates the elapsed time every second so the player can see live time
   void startGameTimer() {
     gameTimer?.cancel();
     gameTimer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -443,6 +449,7 @@ class _GameScreenState extends State<GameScreen> {
     });
   }
 
+  // Displays the current puzzle hint and records hint usage for scoring
   Future<void> showHint() async {
     if (!canUseHint || puzzles.isEmpty) return;
 

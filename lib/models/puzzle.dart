@@ -21,6 +21,7 @@ class Puzzle {
     required this.hint,
   });
 
+  //Converts puzzle data into a map so it can be inserted into SQLite
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -35,6 +36,7 @@ class Puzzle {
     };
   }
 
+  //Builds puzzle object from a database record when loading levels
   factory Puzzle.fromMap(Map<String, dynamic> map) {
     return Puzzle(
       id: map['id'],
@@ -49,6 +51,7 @@ class Puzzle {
     );
   }
 
+  //Breaks multiple accepts answer into list for easier checking
   List<String> get acceptedAnswerList {
     return acceptedAnswers
         .split('|')

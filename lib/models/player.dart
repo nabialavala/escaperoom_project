@@ -9,6 +9,7 @@ class Player {
     required this.createdAt,
   });
 
+  //Converts player object into a map so it can be stored in the database
   Map<String, dynamic> toMap() {
     return {
       'id': id, 
@@ -17,6 +18,7 @@ class Player {
     };
   }
   
+  //Rebuilds player object from database row when reading saved data
   factory Player.fromMap(Map<String, dynamic> map) {
     return Player(
       id: map['id'], 
