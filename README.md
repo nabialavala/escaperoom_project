@@ -150,5 +150,19 @@ flutter build apk --release
 APK will be located in:
 build/app/outputs/flutter-apk/app-release.apk
 
+# Data & Persistence
+Data is stored locally using SQLite
+Player progress is automatically saved
+Sessions can resume if not completed
+Settings (username, theme, etc.) use SharedPreferences
 
+# Features
+- Player login system
+- Multiple puzzle themes
+- Real-time timer
+- Hint system with delay
+- Progress tracking
+- Leaderboard ranking
+- Persistent sessions
+- Score calculation system
 
