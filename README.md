@@ -62,7 +62,6 @@ Leaderboard
 Final score summary
 
 2. The app uses a local SQLite database initialized in database_helper.
-
 Tables:
 players → stores usernames
 puzzles → stores all puzzle data
@@ -72,3 +71,38 @@ Key features:
 Database versioning & upgrades supported
 Automatic puzzle seeding on first launch
 Foreign key relationship between sessions and players
+
+3. Puzzle System
+Each puzzle contains:
+Story text
+Question
+Accepted answers (multiple allowed using |)
+Hint
+Reward item
+
+Handled by the Puzzle model.
+
+4. Session Tracking
+Each game session tracks:
+Current level
+Time spent
+Hints used
+Wrong attempts
+Collected items
+Final score
+
+Managed using the session model and repository.
+
+5. Game Logic
+The main game logic is handled in GameScreen:
+Loads puzzles by theme
+Validates answers
+Unlocks hints after 60 seconds
+Tracks score and progress
+Saves session continuously
+
+6. Leaderboard & Progress
+Leaderboard: Shows top scores across players
+Progress Screen: Shows current and completed sessions
+
+Both pull data using SQL queries from session_repository.
