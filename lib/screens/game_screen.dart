@@ -68,6 +68,66 @@ class _GameScreenState extends State<GameScreen> {
     Future.microtask(() => loadPuzzles());
   }
 
+  Color get themeColor {
+    switch (widget.theme) {
+      case 'Zombie':
+        return const Color(0xFF2E7D32);
+      case 'Murder Mystery':
+        return const Color(0xFFC62828);
+      case 'Time Travel':
+        return const Color(0xFF5C6F8C);
+      default:
+        return Colors.deepPurple;
+    }
+  }
+
+  Color get themeLightColor {
+    switch (widget.theme) {
+      case 'Zombie':
+        return const Color(0xFFA5D6A7);
+      case 'Murder Mystery':
+        return const Color(0xFFEF9A9A);
+      case 'Time Travel':
+        return const Color(0xFFB0BEC5);
+      default:
+        return const Color(0xFFD1C4E9);
+    }
+  }
+
+  bool get isDarkMode {
+    return Theme.of(context).brightness == Brightness.dark;
+  }
+
+  Color get pageBackgroundColor {
+    return isDarkMode ? Colors.black : Colors.white;
+  }
+
+  Color get sectionColor {
+    return isDarkMode
+        ? themeColor.withOpacity(0.18)
+        : themeColor.withOpacity(0.10);
+  }
+
+  Color get strongSectionColor {
+    return isDarkMode
+        ? themeColor.withOpacity(0.28)
+        : themeColor.withOpacity(0.16);
+  }
+
+  Color get borderColor {
+    return isDarkMode
+        ? themeLightColor.withOpacity(0.55)
+        : themeColor.withOpacity(0.45);
+  }
+
+  Color get primaryTextColor {
+    return isDarkMode ? Colors.white : Colors.black;
+  }
+
+  Color get secondaryTextColor {
+    return isDarkMode ? Colors.white70 : Colors.black87;
+  }
+
   Future<void> loadPuzzles() async {
     final loadedPuzzles =
         await puzzleRepository.getPuzzlesByTheme(widget.theme);
@@ -233,7 +293,11 @@ class _GameScreenState extends State<GameScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Collected: ${currentPuzzle.rewardText}'),
+          backgroundColor: themeColor,
+          content: Text(
+            'Collected: ${currentPuzzle.rewardText}',
+            style: const TextStyle(color: Colors.white),
+          ),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -394,7 +458,11 @@ class _GameScreenState extends State<GameScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Hint unlocked: $hint'),
+        backgroundColor: themeColor,
+        content: Text(
+          'Hint unlocked: $hint',
+          style: const TextStyle(color: Colors.white),
+        ),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -411,6 +479,31 @@ class _GameScreenState extends State<GameScreen> {
     gameTimer?.cancel();
     answerController.dispose();
     super.dispose();
+  }
+
+  Widget buildInfoSection({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: sectionColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor),
+      ),
+      child: child,
+    );
+  }
+
+  ButtonStyle themedButtonStyle({required bool enabled}) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: enabled ? themeColor : themeColor.withOpacity(0.35),
+      foregroundColor: Colors.white,
+      disabledBackgroundColor: themeColor.withOpacity(0.25),
+      disabledForegroundColor: Colors.white70,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+    );
   }
 
   @override
@@ -440,111 +533,182 @@ class _GameScreenState extends State<GameScreen> {
     final currentPuzzle = puzzles[currentPuzzleIndex];
 
     return Scaffold(
+      backgroundColor: pageBackgroundColor,
       appBar: AppBar(
-        title: Text('${widget.theme} - Level ${currentPuzzle.levelNumber}'),
+        backgroundColor: pageBackgroundColor,
+        elevation: 0,
+        title: Text(
+          '${widget.theme} - Level ${currentPuzzle.levelNumber}',
+          style: TextStyle(
+            color: primaryTextColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        iconTheme: IconThemeData(color: primaryTextColor),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              currentPuzzle.storyText,
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
+            buildInfoSection(
+              child: Text(
+                currentPuzzle.storyText,
+                style: TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                  color: secondaryTextColor,
+                ),
               ),
             ),
             if (widget.theme != 'Murder Mystery') ...[
               const SizedBox(height: 20),
-              Text(
-                'Collected Items (${collectedItems.length}/10)',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              buildInfoSection(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Collected Items (${collectedItems.length}/10)',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (collectedItems.isEmpty)
+                      Text(
+                        'No items collected yet.',
+                        style: TextStyle(color: secondaryTextColor),
+                      )
+                    else
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: collectedItems.asMap().entries.map((entry) {
+                          final index = entry.key + 1;
+                          final item = entry.value;
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Text(
+                              '$index. $item',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              if (collectedItems.isEmpty)
-                const Text('No items collected yet.')
-              else
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: collectedItems.asMap().entries.map((entry) {
-                    final index = entry.key + 1;
-                    final item = entry.value;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Text(
-                        '$index. $item',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    );
-                  }).toList(),
-                ),
             ],
             const SizedBox(height: 20),
             Text(
-              "Time Elapsed: $elapsedSeconds seconds",
-              style: const TextStyle(
+              'Time Elapsed: $elapsedSeconds seconds',
+              style: TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
+                color: secondaryTextColor,
               ),
             ),
+            const SizedBox(height: 12),
             if (currentPuzzle.theme == 'Murder Mystery' &&
                 currentPuzzle.isFinalLevel == 1) ...[
-              const Text(
-                'Clues Collected:',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              buildInfoSection(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Clues Collected:',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...murderMysteryClues.asMap().entries.map((entry) {
+                      final number = entry.key + 1;
+                      final clue = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          '$number. $clue',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: secondaryTextColor,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              ...murderMysteryClues.asMap().entries.map((entry) {
-                final number = entry.key + 1;
-                final clue = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: Text(
-                    '$number. $clue',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                );
-              }).toList(),
               const SizedBox(height: 20),
-              Text(
-                currentPuzzle.question,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: strongSectionColor,
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: borderColor),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'You have $mysteryGuessAttemptsLeft guesses remaining.',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
+                child: Column(
+                  children: [
+                    Text(
+                      currentPuzzle.question,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: primaryTextColor,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'You have $mysteryGuessAttemptsLeft guesses remaining.',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                        color: secondaryTextColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ] else ...[
               PuzzleCard(
                 puzzle: currentPuzzle.question,
+                backgroundColor: strongSectionColor,
+                borderColor: borderColor,
+                textColor: primaryTextColor,
               ),
-              const SizedBox(height: 10),
             ],
             const SizedBox(height: 20),
             TextField(
               controller: answerController,
-              decoration: const InputDecoration(
+              style: TextStyle(color: primaryTextColor),
+              decoration: InputDecoration(
                 labelText: 'Enter your answer',
-                border: OutlineInputBorder(),
+                labelStyle: TextStyle(color: secondaryTextColor),
+                filled: true,
+                fillColor: isDarkMode
+                    ? themeColor.withOpacity(0.10)
+                    : themeColor.withOpacity(0.06),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: borderColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: themeColor, width: 2),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
+              style: themedButtonStyle(enabled: true),
               onPressed: checkAnswer,
               child: const Text('Submit Answer'),
             ),
@@ -552,30 +716,53 @@ class _GameScreenState extends State<GameScreen> {
                 currentPuzzle.isFinalLevel == 1)) ...[
               const SizedBox(height: 12),
               ElevatedButton(
+                style: themedButtonStyle(enabled: canUseHint),
                 onPressed: canUseHint ? showHint : null,
                 child: const Text('Use Hint'),
               ),
               const SizedBox(height: 12),
-              Text(
-                hintText,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
               if (hintText.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: sectionColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: borderColor),
+                  ),
+                  child: Text(
+                    hintText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                      color: secondaryTextColor,
+                    ),
+                  ),
+                ),
+              if (hintText.isNotEmpty) ...[
+                const SizedBox(height: 12),
                 ElevatedButton(
+                  style: themedButtonStyle(enabled: true),
                   onPressed: () {
-                    showHintPopup(context, hintText);
+                    showHintPopup(
+                      context,
+                      hintText,
+                      themeColor,
+                    );
                   },
                   child: const Text('View Hint'),
                 ),
+              ],
             ],
             const SizedBox(height: 16),
-            Text(
-              feedbackMessage,
-              style: const TextStyle(fontSize: 16),
-            ),
+            if (feedbackMessage.isNotEmpty)
+              Text(
+                feedbackMessage,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: primaryTextColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
           ],
         ),
       ),
