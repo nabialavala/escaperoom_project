@@ -9,21 +9,45 @@ Players must solve riddles, uncover clues, and collect key items to complete eac
 
 The objective is simple: solve every puzzle, complete every experiment, and escape.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
 # Techologies Used
 Flutter (Dart)
 SQLite (sqflite package)
 SharedPreferences (for settings)
 Material UI
+
+# Project Structure
+lib/
+│
+├── models/
+│   ├── player.dart
+│   ├── puzzle.dart
+│   ├── session.dart
+│
+├── database/
+│   └── database_helper.dart
+│
+├── repositories/
+│   ├── puzzle_repository.dart
+│   └── session_repository.dart
+│
+├── screens/
+│   ├── home_screen.dart
+│   ├── login_screen.dart
+│   ├── theme_screen.dart
+│   ├── game_screen.dart
+│   ├── progress_screen.dart
+│   ├── leader_screen.dart
+│   ├── settings_screen.dart
+│   └── summary_screen.dart
+│
+├── services/
+│   ├── hint_service.dart
+│   └── score_service.dart
+│
+├── widgets/
+│   ├── puzzle_card.dart
+│   └── hint_popup.dart
+│
+└── main.dart
+
+
