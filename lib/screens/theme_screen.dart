@@ -91,11 +91,45 @@ class ThemeScreen extends StatelessWidget {
 
               const SizedBox(height: 15),
 
-              statsButton(
-                context,
-                title: "Settings",
-                icon: Icons.settings,
-                destination: const SettingsScreen(),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.white30),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                  ),
+                  onPressed: () async {
+                    final updatedUsername = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    );
+
+                    if (updatedUsername != null && updatedUsername is String) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ThemeScreen(username: updatedUsername),
+                        ),
+                      );
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Icon(Icons.settings, color: Colors.white),
+                      SizedBox(width: 10),
+                      Text(
+                        "Settings",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

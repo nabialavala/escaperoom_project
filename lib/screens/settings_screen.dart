@@ -38,7 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString('username', usernameController.text.trim());
+    final updatedUsername = usernameController.text.trim();
+
+    await prefs.setString('username', updatedUsername);
     await prefs.setBool('dark_mode', isDarkMode);
     await prefs.setBool('sound_enabled', soundEnabled);
     await prefs.setBool('hints_enabled', hintsEnabled);
@@ -49,9 +51,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Settings saved successfully')),
-    );
+    Navigator.pop(context, updatedUsername); // 🔥 THIS IS THE KEY
   }
 
   @override
