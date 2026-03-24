@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
             children: [
              
               const Text(
-                "ESCAPE ROOM",
+                "EXPERIMENT 626: ESCAPE MISSIONS",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 36,
@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
 
               
               const Text(
-                "Solve puzzles. Beat the clock. Escape.",
+                "Solve puzzles. Stay sharp. Escape.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
