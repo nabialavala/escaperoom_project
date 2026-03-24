@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'theme_screen.dart';
 
+// Collects the player's name before they begin an escape mission.
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Tracks the player's typed name before entering the game.
     final TextEditingController controller = TextEditingController();
 
     return Scaffold(
@@ -63,6 +65,8 @@ class LoginScreen extends StatelessWidget {
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
+
+                  // Sends the entered username to the theme selection screen.
                   onPressed: () {
                     Navigator.push(
                       context,

@@ -10,6 +10,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // Controls the username text field so the saved player name can be edited.
   final TextEditingController usernameController = TextEditingController();
 
   bool isDarkMode = true;
@@ -22,7 +23,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     loadSettings();
   }
-
+  // Reads saved user preferences from SharedPreferences when the screen opens.
   Future<void> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -34,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       isLoading = false;
     });
   }
-
+  // Saves the current username and toggle preferences so they persist between app launches.
   Future<void> saveSettings() async {
     final prefs = await SharedPreferences.getInstance();
 

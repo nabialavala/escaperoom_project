@@ -1,6 +1,9 @@
 import '../models/puzzle.dart';
 
+// Initial puzzle data loaded into SQLite so each theme has levels ready on first launch.
 final List<Puzzle> seedPuzzles = [
+  
+  // Zombie theme levels focus on collecting antidote ingredients through puzzle solving.
   // ZOMBIE THEME
   Puzzle(
     theme: 'Zombie',
@@ -213,7 +216,7 @@ final List<Puzzle> seedPuzzles = [
     isFinalLevel: 0,
     hint: 'You hear it in caves or large empty spaces.',
   ),
-
+   // Murder Mystery levels are structured so each solved puzzle reveals one investigation clue.
   // MURDER MYSTERY THEME
   Puzzle(
     theme: 'Murder Mystery',

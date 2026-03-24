@@ -11,6 +11,7 @@ class LeaderScreen extends StatefulWidget {
 class _LeaderScreenState extends State<LeaderScreen> {
   final SessionRepository sessionRepository = SessionRepository();
 
+  // Stores leaderboard rows returned from the session repository.
   List<Map<String, dynamic>> leaderboard = [];
   bool isLoading = true;
 
@@ -20,6 +21,7 @@ class _LeaderScreenState extends State<LeaderScreen> {
     loadLeaderboard();
   }
 
+  // Pulls completed session scores from the database and displays them in ranking order.
   Future<void> loadLeaderboard() async {
     final data = await sessionRepository.getLeaderboard();
 

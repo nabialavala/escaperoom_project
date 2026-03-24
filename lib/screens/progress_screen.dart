@@ -24,7 +24,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     super.initState();
     loadPlayerSessions();
   }
-
+  // Loads all saved sessions for the current player so both active and completed runs can be shown.
   Future<void> loadPlayerSessions() async {
     final data = await sessionRepository.getPlayerSessions(widget.playerName);
 
@@ -36,9 +36,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Separates unfinished sessions so the player can quickly see their current run.
     final activeSessions =
         sessions.where((session) => session['status'] == 'in_progress').toList();
-
+    // Separates completed sessions to display past results and final scores.
     final completedSessions =
         sessions.where((session) => session['status'] == 'completed').toList();
 

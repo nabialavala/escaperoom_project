@@ -4,6 +4,7 @@ import 'progress_screen.dart';
 import 'leader_screen.dart';
 import 'settings_screen.dart';
 
+// Lets the player choose a game theme and access progress or leaderboard screens.
 class ThemeScreen extends StatelessWidget {
   final String username;
 
@@ -137,7 +138,7 @@ class ThemeScreen extends StatelessWidget {
       ),
     );
   }
-
+  // Builds a reusable button that opens the selected escape room theme.
   Widget themeButton(
     BuildContext context, {
     required String title,
@@ -178,7 +179,7 @@ class ThemeScreen extends StatelessWidget {
       ),
     );
   }
-
+  // Builds a reusable navigation button for stats-related screens.
   Widget statsButton(
     BuildContext context, {
     required String title,

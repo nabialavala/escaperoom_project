@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/home_screen.dart';
 import 'theme/app_theme.dart';
 
+// App entry point.
 void main() {
   runApp(const MyApp());
 }
@@ -59,7 +60,7 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
-
+    // Sets up the main app configuration, theme, and first screen.
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Escape Room',

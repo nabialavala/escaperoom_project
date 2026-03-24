@@ -129,6 +129,8 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   //Loads puzzles data, finds or creates the player, and restores any existing sessions
+  
+  
   Future<void> loadPuzzles() async {
     final loadedPuzzles =
         await puzzleRepository.getPuzzlesByTheme(widget.theme);
@@ -206,8 +208,8 @@ class _GameScreenState extends State<GameScreen> {
     startHintTimer();
     startGameTimer();
   }
-
-  //Saves player's current progress so the game can be resumed
+  
+  
   Future<void> updateCurrentSession({
     required String status,
     required int finalScore,

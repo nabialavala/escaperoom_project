@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// Reusable card widget for displaying the current puzzle question.
 class PuzzleCard extends StatelessWidget {
   final String puzzle;
   final Color backgroundColor;
@@ -16,6 +17,7 @@ class PuzzleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Gives the puzzle text its own styled panel so it stands out from the rest of the screen.
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
 
+// Displays a quick instruction dialog explaining the basic gameplay flow.
 void showHowToPlay(BuildContext context) {
   showDialog(
     context: context,
@@ -33,6 +34,7 @@ void showHowToPlay(BuildContext context) {
   );
 }
 
+// Main landing screen where the player starts the game or reads how to play.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -81,6 +83,8 @@ class HomeScreen extends StatelessWidget {
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
+
+                  // Moves the player from the home screen to the login screen.
                   onPressed: () {
                     Navigator.push(
                       context,
