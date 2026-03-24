@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-
+// Shows the current hint in a popup so the player can reread it more easily.
 void showHintPopup(BuildContext context, String hint, Color themeColor) {
   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
   showDialog(
     context: context,
+    // Uses an AlertDialog to keep the hint visible without leaving the game screen.
     builder: (_) => AlertDialog(
       backgroundColor: isDarkMode ? Colors.black : Colors.white,
       shape: RoundedRectangleBorder(

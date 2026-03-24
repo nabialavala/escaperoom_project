@@ -127,7 +127,8 @@ class _GameScreenState extends State<GameScreen> {
   Color get secondaryTextColor {
     return isDarkMode ? Colors.white70 : Colors.black87;
   }
-
+  
+  
   Future<void> loadPuzzles() async {
     final loadedPuzzles =
         await puzzleRepository.getPuzzlesByTheme(widget.theme);
@@ -205,7 +206,8 @@ class _GameScreenState extends State<GameScreen> {
     startHintTimer();
     startGameTimer();
   }
-
+  
+  
   Future<void> updateCurrentSession({
     required String status,
     required int finalScore,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
+// Shows a final summary of the player's performance after a completed run.
 class SummaryScreen extends StatelessWidget {
   final int score;
   final int time;
@@ -57,6 +58,8 @@ class SummaryScreen extends StatelessWidget {
                     backgroundColor: Colors.deepPurple,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
+
+                  // Sends the player back to the home screen and clears old routes from the stack.
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -79,6 +82,7 @@ class SummaryScreen extends StatelessWidget {
     );
   }
 
+  // Reusable row widget for displaying summary labels and values.
   Widget summaryItem(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),

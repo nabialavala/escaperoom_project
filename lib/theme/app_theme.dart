@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+// Stores the app's shared theme styling so colors and widget styles stay consistent.
 class AppTheme {
+  // Main dark theme used across the app.
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: Colors.black,
@@ -26,6 +28,7 @@ class AppTheme {
         letterSpacing: 2,
       ),
     ),
+    // Applies consistent styling to ElevatedButton widgets throughout the app.
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.deepPurple,
