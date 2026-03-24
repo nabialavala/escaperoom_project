@@ -166,3 +166,14 @@ Settings (username, theme, etc.) use SharedPreferences
 - Persistent sessions
 - Score calculation system
 
+# Notes / Known Limitations
+App currently supports single-player mode
+No online database (local only)
+UI optimized for Android (not fully tested on iOS)
+
+# Future Improvements
+Multiplayer support
+Online leaderboard
+More themes and puzzles
+Sound effects and animations
+User authentication system
