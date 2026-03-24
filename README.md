@@ -1,5 +1,5 @@
-# Experiment 626: Escape Missions
-# escape_room
+## Experiment 626: Escape Missions
+## escape_room
 
 Experiment 626: Escape Missions is a puzzle-based escape room mobile application developed using Flutter. Inspired by the idea of controlled chaos and experimental challenges, players must navigate through a series of themed missions by solving puzzles, collecting items, and progressing through levels.
 
@@ -9,13 +9,13 @@ Players must solve riddles, uncover clues, and collect key items to complete eac
 
 The objective is simple: solve every puzzle, complete every experiment, and escape.
 
-# Techologies Used
-Flutter (Dart)
-SQLite (sqflite package)
-SharedPreferences (for settings)
-Material UI
+## Techologies Used
+- Flutter (Dart)
+- SQLite (sqflite package)
+- SharedPreferences (for settings)
+- Material UI
 
-# Project Structure
+## Project Structure
 lib/
 │
 ├── models/
@@ -50,7 +50,7 @@ lib/
 │
 └── main.dart
 
-# How the App Works
+## How the App Works
 1. Player Flow
 User enters their name (Login Screen)
 Selects a theme (Theme Screen)
@@ -107,14 +107,14 @@ Progress Screen: Shows current and completed sessions
 
 Both pull data using SQL queries from session_repository.
 
-# Hint System
+## Hint System
 Hints are stored in the database and displayed during gameplay when unlocked.
 
-# Scoring System
+## Scoring System
 The final score is calculated using the following formula:
 Score = 1000 - (time * 2) - (hints * 50) - (wrong attempts * 25) + (difficulty bonus * 100)
 
-# Screens
+## Screens
 - Home Screen: start game and view instructions  
 - Login Screen: enter player name  
 - Theme Screen: select game theme and access stats  
@@ -124,7 +124,7 @@ Score = 1000 - (time * 2) - (hints * 50) - (wrong attempts * 25) + (difficulty b
 - Summary Screen: display final results  
 - Settings Screen: manage user preferences  
 
-# Setup Instructions
+## Setup Instructions
 1. Prerequisites
 Make sure you have installed:
 Flutter SDK
@@ -150,13 +150,13 @@ flutter build apk --release
 APK will be located in:
 build/app/outputs/flutter-apk/app-release.apk
 
-# Data & Persistence
+## Data & Persistence
 Data is stored locally using SQLite
 Player progress is automatically saved
 Sessions can resume if not completed
 Settings (username, theme, etc.) use SharedPreferences
 
-# Features
+## Features
 - Player login system
 - Multiple puzzle themes
 - Real-time timer
@@ -166,14 +166,14 @@ Settings (username, theme, etc.) use SharedPreferences
 - Persistent sessions
 - Score calculation system
 
-# Notes / Known Limitations
-App currently supports single-player mode
-No online database (local only)
-UI optimized for Android (not fully tested on iOS)
+## Notes / Known Limitations
+- App currently supports single-player mode
+- No online database (local only)
+- UI optimized for Android (not fully tested on iOS)
 
-# Future Improvements
-Multiplayer support
-Online leaderboard
-More themes and puzzles
-Sound effects and animations
-User authentication system
+## Future Improvements
+- Multiplayer support
+- Online leaderboard
+- More themes and puzzles
+- Sound effects and animations
+- User authentication system
