@@ -106,3 +106,23 @@ Leaderboard: Shows top scores across players
 Progress Screen: Shows current and completed sessions
 
 Both pull data using SQL queries from session_repository.
+
+# Hint System
+Hints are stored in the database and displayed during gameplay when unlocked.
+
+# Scoring System
+The final score is calculated using the following formula:
+
+Score = 1000 - (time * 2) - (hints * 50) - (wrong attempts * 25) + (difficulty bonus * 100)
+
+
+# Screens
+- Home Screen: start game and view instructions  
+- Login Screen: enter player name  
+- Theme Screen: select game theme and access stats  
+- Game Screen: solve puzzles and progress through levels  
+- Progress Screen: view player statistics and sessions  
+- Leaderboard Screen: view top scores  
+- Summary Screen: display final results  
+- Settings Screen: manage user preferences  
+
