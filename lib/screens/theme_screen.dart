@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'game_screen.dart';
 import 'progress_screen.dart';
 import 'leader_screen.dart';
+import 'settings_screen.dart';
 
 class ThemeScreen extends StatelessWidget {
   final String username;
@@ -86,6 +87,15 @@ class ThemeScreen extends StatelessWidget {
                 title: "Leaderboard",
                 icon: Icons.emoji_events,
                 destination: const LeaderScreen(),
+              ),
+
+              const SizedBox(height: 15),
+
+              statsButton(
+                context,
+                title: "Settings",
+                icon: Icons.settings,
+                destination: const SettingsScreen(),
               ),
             ],
           ),
