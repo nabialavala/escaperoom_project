@@ -50,4 +50,25 @@ lib/
 │
 └── main.dart
 
+# How the App Works
+1. Player Flow
+User enters their name (Login Screen)
+Selects a theme (Theme Screen)
+Plays through puzzles (Game Screen)
+Progress is saved automatically
+User can view:
+Progress
+Leaderboard
+Final score summary
 
+2. The app uses a local SQLite database initialized in database_helper.
+
+Tables:
+players → stores usernames
+puzzles → stores all puzzle data
+sessions → tracks game progress
+
+Key features:
+Database versioning & upgrades supported
+Automatic puzzle seeding on first launch
+Foreign key relationship between sessions and players
